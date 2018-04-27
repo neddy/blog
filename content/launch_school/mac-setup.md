@@ -16,7 +16,6 @@ comments = true
 
 
 ### Install Ruby using rbenv
-Reference: https://gorails.com/setup/osx/10.12-sierra
 
 Use Homebrew to install rbenv:
 ```bash
@@ -38,3 +37,5 @@ Finally check your ruby version
 ruby -v
 #=> ruby 2.5.0 ...
 ```
+<br>
+Reference: https://gorails.com/setup/osx/10.12-sierra
