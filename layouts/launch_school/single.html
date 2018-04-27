@@ -8,7 +8,7 @@
            {{ .Params.bref | safeHTML }}.
       </p>
 
-    </div> 
+    </div>
     <div id="kube-component" class="content">
     {{ partial "toc" .}}
 
@@ -18,6 +18,16 @@
      {{ $script := (delimit (slice "scripts" .Params.script) "/")}}
     {{ partial (string $script) .}}
     {{end }}
+    <br>
+    <div>
+      {{ if .Site.DisqusShortname }}
+      {{ if .Params.comments }}
+      <article>
+          {{ template "_internal/disqus.html" . }}
+      </article>
+      {{ end }}
+      {{ end }}
+    </div>
     </div>
     </div>
 {{ end }}

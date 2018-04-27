@@ -24,9 +24,11 @@
     </div>
 
     {{ if .Site.DisqusShortname }}
-    <article>
-        {{ template "_internal/disqus.html" . }}
-    </article>
+      {{ if .Params.comments }}
+      <article>
+          {{ template "_internal/disqus.html" . }}
+      </article>
+      {{ end }}
     {{ end }}
 
 </div>

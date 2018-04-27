@@ -6,6 +6,7 @@ weight = 20
 draft = false
 bref = "A few simple setup to get your development environment setup on your Mac."
 toc = true
+comments = true
 +++
 
 ### Install [Homebrew](https://brew.sh/) 

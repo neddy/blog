@@ -4,6 +4,7 @@ date = 2018-04-25T18:10:28+10:00
 description = "My first blog post..."
 weight = 20
 draft = false
+comments = true
 +++
 
 In this blog I hope to capture my journey at Launch School as I progress as a developer. I also hope to amass a small number of 'How To's' and information in the other sections of this website.  
@@ -12,7 +13,11 @@ Initially this site will be a bit of a work in progress, as I build up my skills
 
 ```ruby
 # Ruby code...
-puts "Hello World!"
+def hello_world
+  puts "Hello World!"
+end
+
+hello_world
 #=> Hello World!
 ```
 
