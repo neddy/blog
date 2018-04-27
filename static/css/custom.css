@@ -1,0 +1,16 @@
+pre {
+  background-color: #F0F3F3;
+}
+code {
+  background-color: #F0F3F3
+}
+pre,
+pre code {
+  background: #F0F3F3;
+  padding: 0;
+  top: 0;
+  display: block;
+  line-height: 20px;
+  color: rgba(49, 52, 57, 0.85);
+  overflow: none;
+  white-space: pre-wrap; }
