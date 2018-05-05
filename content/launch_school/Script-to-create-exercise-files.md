@@ -20,8 +20,8 @@ I use Atom as my text editor and I can do this all in the editor, by copying the
 #!/usr/bin/env ruby
 
 exercises = 10
-exercises.times do |n|
-  filename = "ex_#{n + 1}.rb"
+(1..exercises).each do |n|
+  filename = "ex_#{n}.rb"
   File.open(filename, "w") { |file| file.write("# #{filename}\n# ") }
 end
 ```
