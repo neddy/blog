@@ -118,7 +118,7 @@ When writing answers to the test questions, make sure to be as precise as possib
 
 As well as requiring a general precision of language in your answers, for the purposes of the assessment there are a few areas where we would like you to refer to certain things in a very clear and fairly specific way; these are outlined below.
 
-##### Truthiness
+### Truthiness
 In the assessment we want you to be very clear about the distinction between truthy and the boolean true (and similarly the distinction between falsey and the boolean false).
 
 In Ruby, every value apart from false and nil, evaluates to true in a boolean context. We can therefore say that in Ruby, every value apart from false and nil is truthy; we can also say that false and nil are falsey. This is not the same as saying every value apart from false and nil is true, or is equal to true. These may seem like subtle distinctions but they are important ones.
@@ -144,18 +144,341 @@ end
 *Use "evaluates to true" or "is truthy" when discussing an expression that evaluates to true in a boolean context
 *Do not use "is true" or "is equal to true" unless specifically discussing the boolean true
 
-##### Method Definition and Method Invocation
+### Method Definition and Method Invocation
 When discussing methods, particularly in terms of how blocks and methods interact with local variables, we want you to explain this in terms of method definition and method invocation. You can review [this assignment](https://launchschool.com/lessons/a0f3cd44/assignments/9e9e907c) for an outline of the mental model to use.
 
-##### Integer, Fixnum and Bignum
+### Integer, Fixnum and Bignum
 As of Ruby 2.4.0, Ruby has unified Fixnum and Bignum into Integer; Fixnum and Bignum are now deprecated. For the purposes of the assessment we want you to refer to Integer when identifying a Ruby object that represents a whole number. [This assignment](https://launchschool.com/lessons/c82cd406/assignments/1788c3a1) provides some additional context.
+<br>
+<br>
 
-##### Variable References and Object Mutability Articles
-We wrote a series of blog posts that thoroughly cover variable references and object mutability:
+---
+## Variable References and Object Mutability Articles
+<br>
 
-* [Variable References and Mutability of Ruby Objects](https://launchschool.com/blog/references-and-mutability-in-ruby)
-* [Mutating and Non-Mutating Methods in Ruby](https://launchschool.com/blog/mutating-and-non-mutating-methods)
-* [Object Passing in Ruby - Pass by Reference or Pass by Value](https://launchschool.com/blog/object-passing-in-ruby)
+### 1. [Variable References and Mutability of Ruby Objects](https://launchschool.com/blog/references-and-mutability-in-ruby)
+
+*Notes*
+
+---
+
+##### Variable Assignment
+
+An object is a bit of data that has some sort of state — sometimes called a value — and associated behavior. It can be simple, like the Boolean object true, or it can be complex, like an object that represents a database connection.
+
+Objects can be assigned to variables, like this
+
+```ruby
+>> greeting = 'Hello'
+=> "Hello"
+```
+This tells Ruby to associate the name greeting with the String object whose value is “Hello”. In Ruby, greeting is said to reference the String object. We can also talk of the variable as being bound to the String object, or binding variable to the String object. Internally, the relationship looks like this:
+
+![greeting-is-reference.png](greeting-is-reference.png)
+
+After assiging a greeting to a new variable `whazzup` the relationship looks like this:
+
+![](greeting-and-whazzup-same-string.png)
+
+
+##### Variable Reassignment
+
+If next we assign a new value to `greeting` with the `=` operator, the realtionship now looks like so:
+
+![greeting-and-whazzup-different-strings](greeting-and-whazzup-different-strings.png)
+
+Here, we see that `greeting` and `whazzup` no longer refer to the same object; they have different values and different object ids. Crazy, right? Internally, we now have:
+
+What this shows is that reassignment to a variable doesn’t change the object referenced by that variable.
+
+##### Mutability
+
+Objects can be either mutable or immutable. Mutable objects can be changed; immutable objects cannot be changed.
+
+*Immutable Objects*  
+In Ruby, numbers and boolean values are immutable. Once we create an immutable object, we cannot change it.
+
+```ruby
+>> a = 5.2
+=> 5.2
+>> b = 7.3
+=> 7.3
+>> a
+=> 5.2
+>> b
+=> 7.3
+>> a.object_id
+=> 46837436124653162
+>> b.object_id
+=> 65752554559609242
+>> a = b
+=> 7.3
+>> a
+=> 7.3
+>> b
+=> 7.3
+>> a.object_id
+=> 65752554559609242
+>> b.object_id
+=> 65752554559609242
+>> b += 1.1
+=> 8.4
+>> a
+=> 7.3
+>> b
+=> 8.4
+>> a.object_id
+=> 65752554559609242
+>> b.object_id
+=> 32425917317067566
+```
+
+Internally, the reasssignment looks like this:
+![number-before-after-assignment](number-before-after-assignment.png)
+
+Immutable objects aren’t limited to numbers and booleans. Objects of some complex classes, such as nil (the only member of the NilClass class) and Range objects (e.g., 1..10) are immutable. Any class can establish itself as immutable by simply not providing any methods that alter its state.
+
+*Mutable Objects*  
+Unlike numbers, booleans, and a few other types, most objects in Ruby are mutable; they are objects of a class that permit modification of the object’s state in some way. Whether modification is permitted by setter methods or by calling methods that perform more complex operations is unimportant; so long as you can modify an object, it is mutable.
+
+Consider Ruby Array objects; you can easily modify elements using indexed assignment:
+```ruby
+>> a = %w(a b c)
+=> ["a", "b", "c"]
+>> a.object_id
+=> 70227178642840
+>> a[1] = '-'
+=> "-"
+>> a
+=> ["a", "-", "c"]
+>> a.object_id
+=> 70227178642840
+```
+
+This demonstrates that we can modify the value of a, but it doesn’t create a new object since the object id remains the same. We can see why this is by looking at how a is stored in memory:
+![arrays-in-memory](arrays-in-memory.png)
+
+#### A Brief Introduction to Object Passing
+
+When you pass an object as an argument to a method, the method can — in theory — either modify the object, or leave it unmodified. It’s easy enough to see that any method can avoid modifying its arguments. However, whether or not the method can modify an argument is less clear; the ability to modify arguments depends in part on the mutability or immutability of the object represented by the argument, but also on how the argument is passed to the method.
+
+Some languages make copies of method arguments, and pass those copies to the method — since they are merely copies, the original objects can’t be modified. Objects passed to methods in this way are said to be passed by value, and the language is said to be using a pass by value object passing strategy.
+
+Other languages pass references to the method instead — a reference can be used to modify the original object, provided that object is mutable. Objects passed to methods in this way are said to be passed by reference, and the language is said to be using a pass by reference object passing strategy.
+
+Many languages employ both object passing strategies. One strategy is used by default; the other is used when a special syntax, keyword, or declaration is used. Some languages may even employ different defaults depending on the object type — for example, numbers may be passed using a pass by value strategy, while strings may be passed using a pass by reference strategy.
+
+Regardless of which strategy a language employs for a given argument and method, it’s important to know which one is used so you can understand what happens if the method modifies one of its arguments.
+
+#### Developing A Mental Model
+
+When learning new concepts, it often helps to develop a mental model of the concept, and then refine that model as additional information comes to light. 
+
+Pass by value, as you’ll recall, means copying the original objects, so the original object cannot be modified. Since immutable objects cannot be changed, they act like Ruby passes them around by value. This isn’t a completely accurate interpretation of how Ruby passes immutable objects, but it helps us determine why the following code works like it does:
+
+```ruby
+def increment(a)
+  a = a + 1
+end
+
+b = 3
+puts increment(b)    # prints 4
+puts b               # prints 3
+```
+
+Mutable objects, on the other hand, can always be modified simply by calling one of their mutating methods. They act like Ruby passes them around by reference; it isn’t necessary for a method to modify an object that is passed by reference, only that it can modify the object. As you’ll recall, pass by reference means that only a reference to an object is passed around; the variables used inside a method are bound to the original objects. This means that the method is free to modify those objects. Once again, this isn’t completely accurate, but it is helpful. For instance:
+
+```ruby
+def append(s)
+  s << '*'
+end
+
+t = 'abc'
+puts append(t)    # prints abc*
+puts t            # prints abc*
+```
+
+#### Conclusion  
+In this article, we’ve seen that Ruby variables are merely references to objects in memory; that is, a variable is merely a name for some object. Multiple variables can refererence the same object, so modifying an object using a given variable name will be reflected in every other variable that is bound to that object. We’ve also learned that assignment to a variable merely changes the binding; the object the variable originally referenced is not modified. Instead, a different object is bound to the variable.
+
+We’ve also learned that certain object types, primarily numbers and Booleans but also some other types, are immutable in Ruby — unchanging; many other objects are mutable — changeable. If you attempt to change an immutable object, you won’t succeed — at best, you can create a new object, and bind a variable to that object with assignment. Mutable objects, however, can be modified without creating new objects.
+
+Finally, we’ve learned a bit about what pass by value and pass by reference mean. We’ve established a mental model that says that Ruby is pass by value for immutable objects, pass by reference otherwise. This model isn’t perfect, but it can be used to help determine whether the object associated bound to an argument will be modified.
+
+---
+
+### 2. [Mutating and Non-Mutating Methods in Ruby](https://launchschool.com/blog/mutating-and-non-mutating-methods)
+
+*Notes*
+
+---
+This article concentrates on mutating and non-mutating methods in Ruby with respect to certain arguments.   
+
+##### Mutating and Non-Mutating Methods
+
+Methods can either be mutating or non-mutating. The object that may, or may not be mutated is of concern when discussing wether a method is mutating or not. 
+
+*Non-Mutating Methods*  
+A method is said to be non-mutating with respect to both an argument and it's receiver if it does not modify that argument.
+
+All methods are non-mutating with respect o immutable objects. A method can't modify numbers, or boolean values as they are immutable.  
+
+*Assignment is Non-Mutating*  
+Of particular importance is assignment with `=`. `=` is not a method, but should be treated as a non-mutating method. The `=` merely tells Ruby to bind an object to a variable.
+
+compare the two following snippets of code:
+
+```ruby
+def fix(value)
+  value.upcase! # Mutates object passed to method
+  value.concat('!') # Also mutates object passed to method
+  value # returns mutated object
+end
+
+s = 'hello'
+t = fix(s)
+```
+
+VS
+
+```ruby
+def fix(value)
+  value = value.upcase # new assignment 
+  value.concat('!') # Mutates new object, which is then implicitly returned
+end
+
+s = 'hello'
+t = fix(s)
+```
+
+We can see that the first snippet of code not only mutates `s`, but also returns a value at the end of the method. The second snippet does not mutate the caller. It's important to note that even though `.concat` is used, which is mutating, it is not used on the original object passed to the method as a new object is created on the second line with the `=`, and then that object is mutated and returned. `*=`, `+=`, and `%=` also create new assignments.
+
+The `=` does not always cause a variable to reference a new object. Look at the following example:
+
+```ruby
+>> def fix(value)
+--   value = value.upcase!
+--   value.concat('!')
+-- end
+=> :fix
+
+>> s = 'hello'
+=> "hello"
+
+>> s.object_id
+=> 70363946430440
+
+>> t = fix(s)
+=> "HELLO!"
+
+>> s
+=> "HELLO!"
+
+>> t
+=> "HELLO!"
+
+>> s.object_id
+=> 70363946430440
+
+>> t.object_id
+=> 70363946430440
+```
+
+Here, when `value = value.upcase!` is executed, it actually references the original, MODIFIED object. This is because `.upcase!` mutates the original string, and then `=` assigns that object back to `value`.
+
+*Mutating Methods*  
+
+A method is said to be mutating with respect to an argument or receiver if it modifies the argument or receiver.
+
+Many, but not all, methods that mutate their receiver use `!` as the last character of their name. However, this is not guaranteed to be the case. For instance, `String#concat` is a mutating method, but it does not include a `!`.
+
+There are several common methods that sometimes cause confusion, `#[]=`, `#<<`, and setter methods.
+
+*Index Assignment is Mutating*  
+
+```ruby
+str[3] = 'x'
+array[5] = Person.new
+hash[:age] = 25
+```
+
+This looks exactly like assignment, which is non-mutating, but is, in fact, mutating. `#[]` modifies the original object (the String, Array, or Hash). It doesn’t change the binding of each variable.
+
+The reason for this is that indexed assignment is a method that a class must supply if it needs indexed assignment. This method is named `#[]=`, and `#[]=` is expected to mutate the object to which it applies. It does not create a new object.
+
+An array example (explanation in comments):
+
+```ruby
+>> a = [3, 5, 8]
+=> [3, 5, 8]
+
+>> a.object_id
+=> 70240541515340 # array object ID
+
+>> a[1].object_id
+=> 11 # Object ID for element at index 1
+
+>> a[1] = 9
+=> 9
+
+>> a[1].object_id
+=> 19 # new object ID for the element at index position 1
+
+>> a
+=> [3, 9, 8]
+
+>> a.object_id
+=> 70240541515340 # Same object ID for the array
+```
+
+This is normal behaviour when working with objects that support indexed assignment: the assignment does cause a new reference to be made, but it is the collection element e.g., (`a[1]`) that is bound to the new object, not the collection (enclosing object) itself.
+
+*Concatenation is Mutating*  
+The `#<<` method used by collections such as Array and Hash, along with the String class is mutating. It looks very similar to `+=`, but while the former is mutating, the latter is not.
+
+The `<<` operator is actually a method that is defined for some classes. It is usually used as a shorthand for appending new values to a collection or String. Such classes define `<<` to mutate their left-hand operand (the receiver object).
+
+*Setters are Mutating*  
+Setters are very similar to indexed assignment; they are methods that are defined to modify the state of an object. Both employ the `something = value` syntax, so they superficially look like assignments. With indexed assignment, the elements of a collection (or the characters of a String) are replaced; with setters, the state of the object is modified, usually by modifying an instance variable.
+
+Setter invocation looks like this:
+
+```ruby
+person.name = 'Bill'
+person.age = 23
+```
+
+This looks exactly like assignment, which is non-mutating, but, since these are setter calls, they actually mutate the object bound to `person`.
+
+We won’t go into a lot of detail to illustrate this; suffice to say that a detailed discussion would be nearly identical to the discussion of indexed assignment.
+
+*Refining the Mental Model*  
+What does this have to do with whether Ruby is pass by value or pass by reference? The mere fact that Ruby can have methods that mutate its arguments would seem to say that Ruby must use pass by reference in some circumstances. Arguments that are passed by copy cannot be mutated, so Ruby must use pass by reference when a method can mutate its arguments.
+
+More importantly, the question of whether Ruby is pass by value or pass by reference usually concerns whether a method will mutate its arguments or receiver. With this discussion, we’re better equipped to determine whether a method will to mutate its arguments or receiver.
+
+The presence of a `!` at the end of a method name is a pretty good indicator that a method mutates its receiver. However, not all mutating methods use the `!` convention. In such cases, you need to look at the source code of the method to see what operations are performed. Certain operations, like setters and indexed assignments should always be treated as mutating methods; others, like assignment and the assignment operators (`+=`, `*=`, etc) are always non-mutating.
+
+While none of this modifies our mental model for object passing, it is all consistent with that mental model. Immutable objects still seem to be passed by value, while mutable objects seemed to be passed by reference. What we have done, though, is show that assignment can break the binding between an argument name and the object it references. This is important to keep in mind when examining the relationships between variables and objects.
+
+*Conclusion*  
+In this article, we’ve seen that methods in Ruby can be mutating or non-mutating with respect to individual arguments, to include the receiver object. A method that does not modify its arguments or receiver is non-mutating with respect to those objects; a method that does modify its arguments or receiver is mutating with respect to the modified objects.
+
+We’ve also learned that assignment in Ruby acts like a non-mutating method — it doesn’t modify any objects, but does alter the binding for the target variable. However, the syntactically similar indexed assignment and object setter operations are mutating. We’ve also seen that the `#<<` operator — when used for concatenation operations — is mutating, while the very similar operation performed by `+=` is non-mutating.
+
+---
+
+### 3. [Object Passing in Ruby - Pass by Reference or Pass by Value](https://launchschool.com/blog/object-passing-in-ruby)
+
+
+*Notes*
+
+---
+##### 
+
+
+
+---
 
 Spend some time reviewing these articles to ensure that you have a good understanding of these topics.
 
